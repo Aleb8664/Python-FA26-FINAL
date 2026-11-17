@@ -81,7 +81,44 @@ st.caption("Browse, search, and manage the sample items from the project invento
 inventory = load_inventory()
 categories = sorted({item["Category"] for item in inventory})
 
-with st.expander("Add an item"):
+browse_tab, add_tab, remove_tab = st.tabs(
+    ["Browse inventory", "Add item", "Remove item"]
+)
+
+with browse_tab:
+    search_column, category_column = st.columns([2, 1])
+    with search_column:
+        search_term = st.text_input(
+            "Search items", placeholder="For example, generator"
+        )
+    with category_column:
+        selected_category = st.selectbox(
+            "Filter by category", ["All categories", *categories]
+        )
+
+    search_term = search_term.strip().casefold()
+    filtered_inventory = [
+        item
+        for item in inventory
+        if (
+            selected_category == "All categories"
+            or item["Category"] == selected_category
+        )
+        and search_term in item["Item"].casefold()
+    ]
+
+    metric_column, category_metric_column, result_column = st.columns(3)
+    metric_column.metric("Inventory items", len(inventory))
+    category_metric_column.metric("Categories", len(categories))
+    result_column.metric("Matching items", len(filtered_inventory))
+
+    if filtered_inventory:
+        st.dataframe(filtered_inventory, hide_index=True, width="stretch")
+    else:
+        st.info("No items match the current search and category filter.")
+
+with add_tab:
+    st.subheader("Add an item to your inventory")
     with st.form("add_item_form"):
         new_item_name = st.text_input("Item name")
         category_options = [*categories, "Add a new category"]
@@ -112,15 +149,18 @@ with st.expander("Add an item"):
                 {"Item": item_name, "Category": category_name},
             ]
             if save_inventory(updated_inventory):
+                inventory = updated_inventory
                 st.success(f"Added {item_name} to {category_name}.")
-                st.rerun()
 
-if inventory:
-    item_labels = [
-        f"{index}: {item['Item']} — {item['Category']}"
-        for index, item in enumerate(inventory)
-    ]
-    with st.expander("Remove an item"):
+with remove_tab:
+    st.subheader("Remove an item from your inventory")
+    if not inventory:
+        st.info("The inventory is empty. There are no items to remove.")
+    else:
+        item_labels = [
+            f"{index}: {item['Item']} — {item['Category']}"
+            for index, item in enumerate(inventory)
+        ]
         with st.form("remove_item_form"):
             selected_item_label = st.selectbox("Choose an item", item_labels)
             remove_item = st.form_submit_button("Remove item")
@@ -132,34 +172,5 @@ if inventory:
                 item for index, item in enumerate(inventory) if index != item_index
             ]
             if save_inventory(updated_inventory):
+                inventory = updated_inventory
                 st.success(f"Removed {removed_item['Item']} from the inventory.")
-                st.rerun()
-
-if not inventory:
-    st.info("The inventory is empty. Add an item to get started.")
-
-categories = sorted({item["Category"] for item in inventory})
-search_column, category_column = st.columns([2, 1])
-with search_column:
-    search_term = st.text_input("Search items", placeholder="For example, generator")
-with category_column:
-    selected_category = st.selectbox("Filter by category", ["All categories", *categories])
-
-search_term = search_term.strip().casefold()
-filtered_inventory = [
-    item
-    for item in inventory
-    if (selected_category == "All categories" or item["Category"] == selected_category)
-    and search_term in item["Item"].casefold()
-]
-
-metric_column, category_metric_column, result_column = st.columns(3)
-metric_column.metric("Inventory items", len(inventory))
-category_metric_column.metric("Categories", len(categories))
-result_column.metric("Matching items", len(filtered_inventory))
-
-st.subheader("Items")
-if filtered_inventory:
-    st.dataframe(filtered_inventory, hide_index=True, width="stretch")
-else:
-    st.info("No items match the current search and category filter.")
