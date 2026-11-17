@@ -1,0 +1,4 @@
+LARGE_ITEMS : Computer Case, Generator, Toolbox
+MEDIUM_ITEMS : Shoe Box, Graphics Card, Lego Boxes, lamp
+SMALL_ITEMS : Pens, paper clips, eraser, Alkaline batteries
+OTHER ITEMS : Car, Gasoline, Lawn mower,
