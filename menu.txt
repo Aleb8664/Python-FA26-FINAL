@@ -1,4 +1,5 @@
-LARGE_ITEMS : Computer Case, Generator, Toolbox
-MEDIUM_ITEMS : Shoe Box, Graphics Card, Lego Boxes, lamp
-SMALL_ITEMS : Pens, paper clips, eraser, Alkaline batteries
-OTHER ITEMS : Car, Gasoline, Lawn mower,
+Tools: Cordless drill, Socket set, Safety ladder, Tool kit
+Office Supplies: Printer paper, Pens, Dry-erase markers, Toner cartridge
+Cleaning Supplies: Disinfectant wipes, Hand soap, Trash bags, Glass cleaner
+Medical Supplies: Nitrile gloves, Gauze pads, First-aid bandages, Face masks
+Items for Sale: Reusable water bottle, T-shirt, Notebook
